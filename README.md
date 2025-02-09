@@ -4,7 +4,7 @@
 ## Инструкция
 ### Сборка
 ```shell
-gcc shm_writer.c -o writer && gcc shm_reader.c -o reader
+gcc src/shm_reader.c -o reader && gcc src/shm_writer.c -o writer
 ```
 ### Запуск
 ```shell
