@@ -19,7 +19,7 @@ key_t parse_key(const char *arg) {
 	key_t key = strtol(arg, &endptr, 10);
 	if (*endptr != '\0' || key == 0) {
 		fprintf(stderr, "Invalid key: %s\n", arg);
-		printf("(exit code %d)\n", KEY_PARSE_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", KEY_PARSE_FAILURE);
 		exit(KEY_PARSE_FAILURE);
 	}
 	return key;
@@ -28,8 +28,8 @@ key_t parse_key(const char *arg) {
 int get_shared_memory(key_t key) {
 	int shmid = shmget(key, SHM_SIZE, ACCESS_PERMISSIONS);
 	if (shmid == -1) {
-		perror("shmget failed");
-		printf("(exit code %d)\n", SHM_GET_FAILURE);
+		fprintf(stderr, "shmget failed: No shared memory found for key %d\n", key);
+		fprintf(stderr, "(exit code %d)\n", SHM_GET_FAILURE);
 		exit(SHM_GET_FAILURE);
 	}
 	return shmid;
@@ -39,7 +39,7 @@ char* attach_shared_memory(int shmid) {
 	char *shm_ptr = shmat(shmid, NULL, 0);
 	if (shm_ptr == (char *)-1) {
 		perror("shmat failed");
-		printf("(exit code %d)\n", SHM_ATTACH_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", SHM_ATTACH_FAILURE);
 		exit(SHM_ATTACH_FAILURE);
 	}
 	return shm_ptr;
@@ -48,7 +48,7 @@ char* attach_shared_memory(int shmid) {
 void detach_shared_memory(char *shm_ptr) {
 	if (shmdt(shm_ptr) == -1) {
 		perror("shmdt failed");
-		printf("(exit code %d)\n", SHM_DETACH_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", SHM_DETACH_FAILURE);
 		exit(SHM_DETACH_FAILURE);
 	}
 }
@@ -56,7 +56,7 @@ void detach_shared_memory(char *shm_ptr) {
 void free_shared_memory(int shmid) {
 	if (shmctl(shmid, IPC_RMID, NULL) == -1) {
 		perror("shmctl failed");
-		printf("(exit code %d)\n", SHM_FREE_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", SHM_FREE_FAILURE);
 		exit(SHM_FREE_FAILURE);
 	}
 }
@@ -64,7 +64,7 @@ void free_shared_memory(int shmid) {
 int main(int argc, char *argv[]) {
 	if (argc != 2) {
 		fprintf(stderr, "Usage: %s <key>\n", argv[0]);
-		printf("(exit code %d)\n", EXIT_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", EXIT_FAILURE);
 		return EXIT_FAILURE;
 	}
 

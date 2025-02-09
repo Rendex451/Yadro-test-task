@@ -19,7 +19,7 @@ key_t create_key(const char *path, char proj_id) {
 	key_t key = ftok(path, proj_id);
 	if (key == -1){
 		perror("ftok failed");
-		printf("(exit code %d)\n", KEY_CREATE_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", KEY_CREATE_FAILURE);
 		exit(KEY_CREATE_FAILURE);
 	}
 	return key;
@@ -29,7 +29,7 @@ int allocate_shared_memory(key_t key, size_t size) {
 	int shmid = shmget(key, size, IPC_CREAT | ACCESS_PERMISSIONS);
 	if (shmid == -1) {
 		perror("shmget failed");
-		printf("(exit code %d)\n", SHM_ALLOCATE_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", SHM_ALLOCATE_FAILURE);
 		exit(SHM_ALLOCATE_FAILURE);
 	}
 	return shmid;
@@ -39,7 +39,7 @@ char *attach_shared_memory(int shmid) {
 	char *shm_ptr = shmat(shmid, NULL, 0);
 	if (shm_ptr == (char *)-1) {
 		perror("shmat failed");
-		printf("(exit code %d)\n", SHM_ATTACH_FAILURE);
+		fprintf(stderr, "(exit code %d)\n", SHM_ATTACH_FAILURE);
 		exit(SHM_ATTACH_FAILURE);
 	}
 	return shm_ptr;
